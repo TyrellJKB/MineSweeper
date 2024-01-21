@@ -13,6 +13,9 @@ NUM_MINES = 10
 #legacy code
 is_revealed = 0
 
+#Play Music
+pygame.mixer.music.load("Sakura-Girl-Beach-chosic.com_.mp3")
+
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -166,9 +169,13 @@ def main():
     game_over = False
     game_win = False
     game_lose = False
+    
+    pygame.mixer.music.play(-1)
+    pygame.mixer.music.set_volume(0.2)
 
 
     while True:
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -202,11 +209,12 @@ if __name__ == "__main__":
 
 
 """""
-Hide 0s
+add multiple difficulties by increasing the grid amount and num of bombs
 The game loops
 The first tile can't be a bomb
 The first click at the very least reveals all non bomb tiles in the 3by3 area
-improve aestics
+improve aesthetic
+create an intro screen
 add sound effects
 add a timer
 add a flag / remaining bomb counter
