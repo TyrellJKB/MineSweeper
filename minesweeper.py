@@ -128,6 +128,36 @@ def is_running(event):
 def get_font(size): # Returns Press-Start-2P in the desired size
     return pygame.font.Font("font.ttf", size)
 
+def intro():
+    
+    running = True
+
+    while running:
+        
+        PLAY_MOUSE_POS = pygame.mouse.get_pos()
+
+        intro_img = pygame.image.load('Bomb.png')
+        
+
+        screen.fill("black")
+        pygame.display.set_caption('Image’s Caption.')
+        
+        PLAY_TEXT = get_font(45).render("YOU WIN", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(x=0, y=0)
+        screen.blit(intro_img, PLAY_RECT)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                running = False
+                pygame.display.update()
+                
+                
+
+
+        pygame.display.update()
+
 def win_screen():
     while True:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
@@ -172,6 +202,8 @@ def main():
     
     pygame.mixer.music.play(-1)
     pygame.mixer.music.set_volume(0.2)
+
+    intro()
 
 
     while True:
