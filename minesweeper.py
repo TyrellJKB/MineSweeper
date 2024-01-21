@@ -8,7 +8,7 @@ pygame.init()
 WIDTH, HEIGHT = 800, 800
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
-NUM_MINES = 1
+NUM_MINES = 99
 
 #legacy code
 is_revealed = 0
@@ -91,9 +91,9 @@ def reveal_adjacent(x, y, reveal_count):
         global is_revealed
         is_revealed += 1
         if is_revealed == GRID_SIZE * GRID_SIZE - NUM_MINES:
-            print("You win!")
-            pygame.quit()
-            quit()
+            win_screen()
+            game_win = True
+            return
         print(is_revealed)
         revealed[x][y] = True
         if grid[x][y] == 0:
@@ -102,10 +102,69 @@ def reveal_adjacent(x, y, reveal_count):
                     reveal_adjacent(x + i, y + j, reveal_count)
 
 
+def is_running(event):
+    x, y = event.pos[0] // CELL_SIZE, event.pos[1] // CELL_SIZE
+
+    if event.button == 1:  # Left-click
+                    if (x, y) in mines:
+                        # Game over, reveal all mines
+                        for mine_x, mine_y in mines:
+                            draw_mine(mine_x, mine_y)
+                        pygame.display.flip()
+                        pygame.time.delay(3000)
+                        game_over = True
+                        loss_screen()
+                    else:
+                        # Reveal the clicked cell and its adjacent tiles
+                        reveal_adjacent(x, y, is_revealed)
+
+    elif event.button == 3:  # Right-click
+                    flags[x][y] = not flags[x][y]
+
+def get_font(size): # Returns Press-Start-2P in the desired size
+    return pygame.font.Font("font.ttf", size)
+
+def win_screen():
+    while True:
+        PLAY_MOUSE_POS = pygame.mouse.get_pos()
+
+        screen.fill("black")
+
+        PLAY_TEXT = get_font(45).render("YOU WIN", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(400, 400))
+        screen.blit(PLAY_TEXT, PLAY_RECT)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        pygame.display.update()
+
+def loss_screen():
+    while True:
+        PLAY_MOUSE_POS = pygame.mouse.get_pos()
+
+        screen.fill("black")
+
+        PLAY_TEXT = get_font(45).render("YOU LOSE", True, "White")
+        PLAY_RECT = PLAY_TEXT.get_rect(center=(400, 400))
+        screen.blit(PLAY_TEXT, PLAY_RECT)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+
+        pygame.display.update()
+
+
+
 def main():
     global game_over
+    global game_win
+    global game_lose
     game_over = False
-    
+    game_win = False
+    game_lose = False
 
 
     while True:
@@ -115,24 +174,14 @@ def main():
                 quit()
 
             if not game_over and event.type == pygame.MOUSEBUTTONDOWN:
-                x, y = event.pos[0] // CELL_SIZE, event.pos[1] // CELL_SIZE
-
-                if event.button == 1:  # Left-click
-                    if (x, y) in mines:
-                        # Game over, reveal all mines
-                        for mine_x, mine_y in mines:
-                            draw_mine(mine_x, mine_y)
-                        pygame.display.flip()
-                        pygame.time.delay(2000)
-                        pygame.quit()
-                        quit()
-                        game_over = True
-                    else:
-                        # Reveal the clicked cell and its adjacent tiles
-                        reveal_adjacent(x, y, is_revealed)
-
-                elif event.button == 3:  # Right-click
-                    flags[x][y] = not flags[x][y]
+                if game_win:
+                    game_over = True
+                    win_screen()
+                elif game_lose:
+                    game_over = True
+                    loss_screen()
+                else:
+                    is_running(event)
 
         screen.fill(WHITE)
         draw_grid()
@@ -145,6 +194,7 @@ def main():
                     draw_flag(x, y)
 
         pygame.display.flip()
+
 
 if __name__ == "__main__":
     main()
