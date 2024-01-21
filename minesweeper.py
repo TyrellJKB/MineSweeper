@@ -5,7 +5,7 @@ import random
 pygame.init()
 
 # Constants
-WIDTH, HEIGHT = 800, 600
+WIDTH, HEIGHT = 800, 800
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
 NUM_MINES = 20
