@@ -52,11 +52,6 @@ def draw_grid():
 def draw_mine(x, y):
     pygame.draw.circle(screen, BLACK, (x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2), CELL_SIZE // 2 - 2)
 
-def draw_flag(x, y):
-    pygame.draw.polygon(screen, RED, [(x * CELL_SIZE + 5, y * CELL_SIZE + 5),
-                                      (x * CELL_SIZE + CELL_SIZE - 5, y * CELL_SIZE + CELL_SIZE // 2),
-                                      (x * CELL_SIZE + 5, y * CELL_SIZE + CELL_SIZE - 5)])
-
 def draw_number(x, y, number):
     font = pygame.font.Font(None, 36)
     text = font.render(str(number), True, BLACK)
@@ -76,34 +71,8 @@ def reveal_adjacent(x, y):
                 for j in range(-1, 2):
                     reveal_adjacent(x + i, y + j)
 
-def place_mines(first_click_x, first_click_y):
-    mines = set()
-
-    while len(mines) < NUM_MINES:
-        x, y = random.randint(0, GRID_SIZE - 1), random.randint(0, GRID_SIZE - 1)
-        if (x, y) != (first_click_x, first_click_y):
-            mines.add((x, y))
-            grid[x][y] = -1  # Mark mine
-
-    # Calculate neighboring mine counts
-    for x in range(GRID_SIZE):
-        for y in range(GRID_SIZE):
-            if grid[x][y] != -1:
-                count = sum(
-                    1
-                    for i in range(-1, 2)
-                    for j in range(-1, 2)
-                    if 0 <= x + i < GRID_SIZE and 0 <= y + j < GRID_SIZE and grid[x + i][y + j] == -1
-                )
-                grid[x][y] = count
-
-    return mines
-
 def main():
     game_over = False
-    flags = set()
-
-    first_click = True
 
     while True:
         for event in pygame.event.get():
@@ -111,32 +80,20 @@ def main():
                 pygame.quit()
                 quit()
 
-            if not game_over and event.type == pygame.MOUSEBUTTONDOWN:
+            if not game_over and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 x, y = event.pos[0] // CELL_SIZE, event.pos[1] // CELL_SIZE
-
-                if first_click:
-                    # Move mine placement after the first click to ensure it's not a mine
-                    mines = place_mines(x, y)
-                    first_click = False
-
-                if event.button == 1:  # Left click to reveal cell
-                    if (x, y) in mines:
-                        # Game over, reveal all mines
-                        for mine_x, mine_y in mines:
-                            draw_mine(mine_x, mine_y)
-                        pygame.display.flip()
-                        pygame.time.delay(2000)
-                        pygame.quit()
-                        quit()
-                        game_over = True
-                    else:
-                        reveal_adjacent(x, y)
-
-                elif event.button == 3:  # Right click to toggle flag
-                    if (x, y) in flags:
-                        flags.remove((x, y))
-                    else:
-                        flags.add((x, y))
+                if (x, y) in mines:
+                    # Game over, reveal all mines
+                    for mine_x, mine_y in mines:
+                        draw_mine(mine_x, mine_y)
+                    pygame.display.flip()
+                    pygame.time.delay(2000)
+                    pygame.quit()
+                    quit()
+                    game_over = True
+                else:
+                    # Reveal the clicked cell and its adjacent tiles
+                    reveal_adjacent(x, y)
 
         screen.fill(WHITE)
         draw_grid()
@@ -148,8 +105,6 @@ def main():
                         draw_mine(x, y)
                     else:
                         draw_number(x, y, grid[x][y])
-                elif (x, y) in flags:
-                    draw_flag(x, y)
 
         pygame.display.flip()
 
