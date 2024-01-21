@@ -63,6 +63,14 @@ def draw_revealed(x, y):
     pygame.draw.rect(screen, WHITE, rect)
     pygame.draw.rect(screen, GRAY, rect, 1)
 
+def reveal_adjacent(x, y):
+    if 0 <= x < GRID_SIZE and 0 <= y < GRID_SIZE and not revealed[x][y]:
+        revealed[x][y] = True
+        if grid[x][y] == 0:
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    reveal_adjacent(x + i, y + j)
+
 def main():
     game_over = False
 
@@ -84,8 +92,8 @@ def main():
                     quit()
                     game_over = True
                 else:
-                    # Reveal the clicked cell
-                    revealed[x][y] = True
+                    # Reveal the clicked cell and its adjacent tiles
+                    reveal_adjacent(x, y)
 
         screen.fill(WHITE)
         draw_grid()
@@ -97,8 +105,6 @@ def main():
                         draw_mine(x, y)
                     else:
                         draw_number(x, y, grid[x][y])
-                elif (x, y) in mines and game_over:  # Draw mines only when the game is won
-                    draw_mine(x, y)
 
         pygame.display.flip()
 
