@@ -133,3 +133,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+"""""
+The game loops
+Theres a win screen
+There is a lose screen
+The first tile can't be a bomb
+The first click at the very least reveals all non bomb tiles in the 3by3 area
+"""""
