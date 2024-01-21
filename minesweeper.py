@@ -60,7 +60,7 @@ def draw_mine(x, y):
 
 def draw_number(x, y, number):
     font = pygame.font.Font(None, 36)
-    text = font.render(str(number), True, BLACK)
+    text = font.render(str(number), True, BLACK) if number > 0 else font.render(str(number), True, BLUE)
     text_rect = text.get_rect(center=(x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2))
     screen.blit(text, text_rect)
 
