@@ -60,8 +60,16 @@ def draw_number(x, y, number):
 
 def draw_revealed(x, y):
     rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-    pygame.draw.rect(screen, WHITE, rect)
+    pygame.draw.rect(screen, (0, 0, 255), rect)  # Use blue color for revealed squares
     pygame.draw.rect(screen, GRAY, rect, 1)
+    
+    if (x, y) in mines:
+        draw_mine(x, y)
+    else:
+        number = grid[x][y]
+        if number > 0:
+            draw_number(x, y, number)
+
 
 def reveal_adjacent(x, y):
     if 0 <= x < GRID_SIZE and 0 <= y < GRID_SIZE and not revealed[x][y]:
@@ -104,7 +112,7 @@ def main():
                     if (x, y) in mines and not game_over:
                         draw_mine(x, y)
                     else:
-                        draw_number(x, y, grid[x][y])
+                        draw_revealed(x, y)  # Use the draw_revealed function
 
         pygame.display.flip()
 
