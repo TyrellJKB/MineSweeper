@@ -52,6 +52,12 @@ def draw_grid():
 def draw_mine(x, y):
     pygame.draw.circle(screen, BLACK, (x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2), CELL_SIZE // 2 - 2)
 
+def draw_flag(x, y):
+    pygame.draw.polygon(screen, RED, [(x * CELL_SIZE + 5, y * CELL_SIZE + 5),
+                                      (x * CELL_SIZE + CELL_SIZE - 5, y * CELL_SIZE + CELL_SIZE // 2),
+                                      (x * CELL_SIZE + 5, y * CELL_SIZE + CELL_SIZE - 5)])
+
+
 def draw_number(x, y, number):
     font = pygame.font.Font(None, 36)
     text = font.render(str(number), True, BLACK)
@@ -73,6 +79,7 @@ def reveal_adjacent(x, y):
 
 def main():
     game_over = False
+    flags = set()
 
     while True:
         for event in pygame.event.get():
@@ -80,20 +87,27 @@ def main():
                 pygame.quit()
                 quit()
 
-            if not game_over and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if not game_over and event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos[0] // CELL_SIZE, event.pos[1] // CELL_SIZE
-                if (x, y) in mines:
-                    # Game over, reveal all mines
-                    for mine_x, mine_y in mines:
-                        draw_mine(mine_x, mine_y)
-                    pygame.display.flip()
-                    pygame.time.delay(2000)
-                    pygame.quit()
-                    quit()
-                    game_over = True
-                else:
-                    # Reveal the clicked cell and its adjacent tiles
-                    reveal_adjacent(x, y)
+
+                if event.button == 1:  # Left click to reveal cell
+                    if (x, y) in mines:
+                        # Game over, reveal all mines
+                        for mine_x, mine_y in mines:
+                            draw_mine(mine_x, mine_y)
+                        pygame.display.flip()
+                        pygame.time.delay(2000)
+                        pygame.quit()
+                        quit()
+                        game_over = True
+                    else:
+                        reveal_adjacent(x, y)
+
+                elif event.button == 3:  # Right click to toggle flag
+                    if (x, y) in flags:
+                        flags.remove((x, y))
+                    else:
+                        flags.add((x, y))
 
         screen.fill(WHITE)
         draw_grid()
@@ -105,6 +119,8 @@ def main():
                         draw_mine(x, y)
                     else:
                         draw_number(x, y, grid[x][y])
+                elif (x, y) in flags:
+                    draw_flag(x, y)
 
         pygame.display.flip()
 
