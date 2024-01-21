@@ -8,7 +8,7 @@ pygame.init()
 WIDTH, HEIGHT = 800, 800
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
-NUM_MINES = 99
+NUM_MINES = 10
 
 #legacy code
 is_revealed = 0
@@ -16,8 +16,10 @@ is_revealed = 0
 # Colors
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GRAY = (200, 200, 200)
+GREY = (200, 200, 200)
 RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+LIGHT_BLUE = (173, 216, 230)
 
 # Create a Minesweeper grid
 grid = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
@@ -51,7 +53,7 @@ def draw_grid():
     for x in range(GRID_SIZE):
         for y in range(GRID_SIZE):
             rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-            pygame.draw.rect(screen, GRAY, rect, 1)
+            pygame.draw.rect(screen, GREY, rect, 1)
 
 def draw_mine(x, y):
     pygame.draw.circle(screen, BLACK, (x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2), CELL_SIZE // 2 - 2)
@@ -77,8 +79,8 @@ def draw_cell_content(x, y):
 
 def draw_revealed(x, y):
     rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-    pygame.draw.rect(screen, (0, 0, 255), rect)  # Use blue color for revealed squares
-    pygame.draw.rect(screen, GRAY, rect, 1)
+    pygame.draw.rect(screen, BLUE, rect)  # Use blue color for revealed squares
+    pygame.draw.rect(screen, LIGHT_BLUE, rect, 1)
 
     if flags[x][y]:
         draw_flag(x, y)
@@ -94,7 +96,6 @@ def reveal_adjacent(x, y, reveal_count):
             win_screen()
             game_win = True
             return
-        print(is_revealed)
         revealed[x][y] = True
         if grid[x][y] == 0:
             for i in range(-1, 2):
@@ -201,9 +202,12 @@ if __name__ == "__main__":
 
 
 """""
+Hide 0s
 The game loops
-Theres a win screen
-There is a lose screen
 The first tile can't be a bomb
 The first click at the very least reveals all non bomb tiles in the 3by3 area
+improve aestics
+add sound effects
+add a timer
+add a flag / remaining bomb counter
 """""
