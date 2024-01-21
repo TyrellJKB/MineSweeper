@@ -5,7 +5,7 @@ import random
 pygame.init()
 
 # Constants
-WIDTH, HEIGHT = 800, 800
+WIDTH, HEIGHT = 800, 600
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
 NUM_MINES = 20
@@ -19,6 +19,7 @@ RED = (255, 0, 0)
 # Create a Minesweeper grid
 grid = [[0 for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 revealed = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
+flags = [[False for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 mines = set()
 
 # Place mines randomly
@@ -58,18 +59,27 @@ def draw_number(x, y, number):
     text_rect = text.get_rect(center=(x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2))
     screen.blit(text, text_rect)
 
+def draw_flag(x, y):
+    pygame.draw.polygon(screen, RED, [(x * CELL_SIZE + 5, y * CELL_SIZE + 5),
+                                      (x * CELL_SIZE + CELL_SIZE - 5, y * CELL_SIZE + CELL_SIZE // 2),
+                                      (x * CELL_SIZE + 5, y * CELL_SIZE + CELL_SIZE - 5)])
+
+def draw_cell_content(x, y):
+    if revealed[x][y]:
+        if (x, y) in mines and not game_over:
+            draw_mine(x, y)
+        else:
+            draw_number(x, y, grid[x][y])
+
 def draw_revealed(x, y):
     rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
     pygame.draw.rect(screen, (0, 0, 255), rect)  # Use blue color for revealed squares
     pygame.draw.rect(screen, GRAY, rect, 1)
-    
-    if (x, y) in mines:
-        draw_mine(x, y)
-    else:
-        number = grid[x][y]
-        if number > 0:
-            draw_number(x, y, number)
 
+    if flags[x][y]:
+        draw_flag(x, y)
+    else:
+        draw_cell_content(x, y)
 
 def reveal_adjacent(x, y):
     if 0 <= x < GRID_SIZE and 0 <= y < GRID_SIZE and not revealed[x][y]:
@@ -80,6 +90,7 @@ def reveal_adjacent(x, y):
                     reveal_adjacent(x + i, y + j)
 
 def main():
+    global game_over
     game_over = False
 
     while True:
@@ -88,20 +99,25 @@ def main():
                 pygame.quit()
                 quit()
 
-            if not game_over and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if not game_over and event.type == pygame.MOUSEBUTTONDOWN:
                 x, y = event.pos[0] // CELL_SIZE, event.pos[1] // CELL_SIZE
-                if (x, y) in mines:
-                    # Game over, reveal all mines
-                    for mine_x, mine_y in mines:
-                        draw_mine(mine_x, mine_y)
-                    pygame.display.flip()
-                    pygame.time.delay(2000)
-                    pygame.quit()
-                    quit()
-                    game_over = True
-                else:
-                    # Reveal the clicked cell and its adjacent tiles
-                    reveal_adjacent(x, y)
+
+                if event.button == 1:  # Left-click
+                    if (x, y) in mines:
+                        # Game over, reveal all mines
+                        for mine_x, mine_y in mines:
+                            draw_mine(mine_x, mine_y)
+                        pygame.display.flip()
+                        pygame.time.delay(2000)
+                        pygame.quit()
+                        quit()
+                        game_over = True
+                    else:
+                        # Reveal the clicked cell and its adjacent tiles
+                        reveal_adjacent(x, y)
+
+                elif event.button == 3:  # Right-click
+                    flags[x][y] = not flags[x][y]
 
         screen.fill(WHITE)
         draw_grid()
@@ -109,10 +125,9 @@ def main():
         for x in range(GRID_SIZE):
             for y in range(GRID_SIZE):
                 if revealed[x][y]:
-                    if (x, y) in mines and not game_over:
-                        draw_mine(x, y)
-                    else:
-                        draw_revealed(x, y)  # Use the draw_revealed function
+                    draw_revealed(x, y)
+                elif flags[x][y]:
+                    draw_flag(x, y)
 
         pygame.display.flip()
 
