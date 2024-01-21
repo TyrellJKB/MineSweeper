@@ -8,7 +8,10 @@ pygame.init()
 WIDTH, HEIGHT = 800, 800
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
-NUM_MINES = 20
+NUM_MINES = 1
+
+#legacy code
+is_revealed = 0
 
 # Colors
 WHITE = (255, 255, 255)
@@ -71,6 +74,7 @@ def draw_cell_content(x, y):
         else:
             draw_number(x, y, grid[x][y])
 
+
 def draw_revealed(x, y):
     rect = pygame.Rect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
     pygame.draw.rect(screen, (0, 0, 255), rect)  # Use blue color for revealed squares
@@ -80,18 +84,29 @@ def draw_revealed(x, y):
         draw_flag(x, y)
     else:
         draw_cell_content(x, y)
+        
 
-def reveal_adjacent(x, y):
+def reveal_adjacent(x, y, reveal_count):
     if 0 <= x < GRID_SIZE and 0 <= y < GRID_SIZE and not revealed[x][y]:
+        global is_revealed
+        is_revealed += 1
+        if is_revealed == GRID_SIZE * GRID_SIZE - NUM_MINES:
+            print("You win!")
+            pygame.quit()
+            quit()
+        print(is_revealed)
         revealed[x][y] = True
         if grid[x][y] == 0:
             for i in range(-1, 2):
                 for j in range(-1, 2):
-                    reveal_adjacent(x + i, y + j)
+                    reveal_adjacent(x + i, y + j, reveal_count)
+
 
 def main():
     global game_over
     game_over = False
+    
+
 
     while True:
         for event in pygame.event.get():
@@ -114,7 +129,7 @@ def main():
                         game_over = True
                     else:
                         # Reveal the clicked cell and its adjacent tiles
-                        reveal_adjacent(x, y)
+                        reveal_adjacent(x, y, is_revealed)
 
                 elif event.button == 3:  # Right-click
                     flags[x][y] = not flags[x][y]
