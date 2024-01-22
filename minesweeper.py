@@ -20,6 +20,9 @@ class Minesweeper:
         pygame.mixer.music.load("Sakura-Girl-Beach-chosic.com_.mp3")
         self.loss_sound = pygame.mixer.Sound("lose_sfx.mp3")
         self.win_sound = pygame.mixer.Sound("win_sfx.mp3")
+        self.intro_bomb = pygame.mixer.Sound("intro_bomb.mp3")
+        self.safe_tile = pygame.mixer.Sound("safe_tile.mp3")
+        self.find_hazard = pygame.mixer.Sound("find_hazard.mp3")
 
         # Colors
         self.WHITE = (255, 255, 255)
@@ -121,6 +124,8 @@ class Minesweeper:
                 for mine_x, mine_y in self.mines:
                     self.draw_mine(mine_x, mine_y)
                 pygame.display.flip()
+                self.find_hazard.play(1,500)
+                self.find_hazard.set_volume(0.5)
                 pygame.time.delay(2000)
                 self.game_lose = True
             else:
@@ -135,14 +140,16 @@ class Minesweeper:
 
     def intro(self):
         running = True
-
+        
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     running = False
+            
 
+            
             self.screen.fill(self.WHITE)
             intro_img = pygame.image.load('Bomb.png')
             self.screen.blit(intro_img, (0, 0))
@@ -204,6 +211,7 @@ class Minesweeper:
         pygame.mixer.music.set_volume(0.2)
 
         self.intro()
+        self.intro_bomb.play(1,1000)
 
         while True:
             for event in pygame.event.get():
@@ -212,6 +220,7 @@ class Minesweeper:
                     quit()
 
                 if not self.game_over and event.type == pygame.MOUSEBUTTONDOWN:
+                    
                     if self.game_win:
                         self.win_screen()
                         self.game_win = False
@@ -223,6 +232,7 @@ class Minesweeper:
                         self.reset_board()
 
                     else:
+                        self.safe_tile.play(1,100)
                         self.is_running(event)
 
             self.screen.fill(self.WHITE)
@@ -243,12 +253,12 @@ if __name__ == "__main__":
 
 
 """""
+menu
 add multiple difficulties by increasing the grid amount and num of bombs
-The game loops
 The first tile can't be a bomb
 The first click at the very least reveals all non bomb tiles in the 3by3 area
 improve aesthetic
-add sound effects
+leaderboards
 add a timer
 add a flag / remaining bomb counter
 """""
