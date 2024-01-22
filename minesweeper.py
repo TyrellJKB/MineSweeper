@@ -8,13 +8,15 @@ pygame.init()
 WIDTH, HEIGHT = 800, 800
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
-NUM_MINES = 20
+NUM_MINES = 5
 
 # Progress tracker
 is_revealed = 0
 
 # Music and Sounds
 pygame.mixer.music.load("Sakura-Girl-Beach-chosic.com_.mp3")
+loss_sound = pygame.mixer.Sound("lose_sfx.mp3")
+win_sound = pygame.mixer.Sound("win_sfx.mp3")
 
 # Colors
 WHITE = (255, 255, 255)
@@ -142,7 +144,7 @@ def intro():
         screen.fill("black")
         pygame.display.set_caption('Image’s Caption.')
         
-        PLAY_TEXT = get_font(45).render("YOU WIN", True, "White")
+        PLAY_TEXT = get_font(45).render("EASTER EGG", True, "White")
         PLAY_RECT = PLAY_TEXT.get_rect(x=0, y=0)
         screen.blit(intro_img, PLAY_RECT)
 
@@ -162,6 +164,9 @@ def win_screen():
     while True:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
 
+        pygame.mixer.music.set_volume(0)
+        win_sound.set_volume(0.05)
+        win_sound.play(0)
         screen.fill("black")
 
         PLAY_TEXT = get_font(45).render("YOU WIN", True, "White")
@@ -178,6 +183,9 @@ def loss_screen():
     while True:
         PLAY_MOUSE_POS = pygame.mouse.get_pos()
 
+        pygame.mixer.music.set_volume(0)
+        loss_sound.set_volume(0.05)
+        pygame.mixer.Sound.play(loss_sound, 1)
         screen.fill("black")
 
         PLAY_TEXT = get_font(45).render("YOU LOSE", True, "White")
@@ -246,7 +254,6 @@ The game loops
 The first tile can't be a bomb
 The first click at the very least reveals all non bomb tiles in the 3by3 area
 improve aesthetic
-create an intro screen
 add sound effects
 add a timer
 add a flag / remaining bomb counter
