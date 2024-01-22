@@ -8,12 +8,12 @@ pygame.init()
 WIDTH, HEIGHT = 800, 800
 GRID_SIZE = 10
 CELL_SIZE = WIDTH // GRID_SIZE
-NUM_MINES = 10
+NUM_MINES = 20
 
-#legacy code
+# Progress tracker
 is_revealed = 0
 
-#Play Music
+# Music and Sounds
 pygame.mixer.music.load("Sakura-Girl-Beach-chosic.com_.mp3")
 
 # Colors
@@ -62,7 +62,7 @@ def draw_mine(x, y):
     pygame.draw.circle(screen, BLACK, (x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2), CELL_SIZE // 2 - 2)
 
 def draw_number(x, y, number):
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font("font.ttf", 14)
     text = font.render(str(number), True, BLACK) if number > 0 else font.render(str(number), True, BLUE)
     text_rect = text.get_rect(center=(x * CELL_SIZE + CELL_SIZE // 2, y * CELL_SIZE + CELL_SIZE // 2))
     screen.blit(text, text_rect)
@@ -115,7 +115,7 @@ def is_running(event):
                         for mine_x, mine_y in mines:
                             draw_mine(mine_x, mine_y)
                         pygame.display.flip()
-                        pygame.time.delay(3000)
+                        pygame.time.delay(2000)
                         game_over = True
                         loss_screen()
                     else:
