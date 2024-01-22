@@ -2,9 +2,7 @@ import pygame
 import random
 
 class Minesweeper:
-    def start_game():
-    
-    
+
     def __init__(self):
         # Initialize Pygame
         pygame.init()
@@ -144,10 +142,14 @@ class Minesweeper:
             pygame.display.update()
 
     def win_screen(self):
-        while True:
+        running = True
+
+        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    running = False
 
             pygame.mixer.music.set_volume(0)
             self.win_sound.set_volume(0.05)
@@ -161,10 +163,14 @@ class Minesweeper:
             pygame.display.update()
 
     def loss_screen(self):
-        while True:
+        running = True
+
+        while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    running = False
 
             pygame.mixer.music.set_volume(0)
             self.loss_sound.set_volume(0.05)
