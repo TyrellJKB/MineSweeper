@@ -11,7 +11,7 @@ class Minesweeper:
         self.WIDTH, self.HEIGHT = 800, 800
         self.GRID_SIZE = 15
         self.CELL_SIZE = self.WIDTH // self.GRID_SIZE
-        self.NUM_MINES = 15
+        self.NUM_MINES = 25
 
         # Progress tracker
         self.is_revealed = 0
@@ -54,6 +54,14 @@ class Minesweeper:
         # Pygame setup
         self.screen = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("Minesweeper")
+    
+    def reset_board(self):
+        self.screen.fill(self.WHITE)
+        self.loss_sound.set_volume(0)
+        self.win_sound.set_volume(0)
+        self.__init__()
+        self.main()
+
 
     def draw_grid(self):
         for x in range(self.GRID_SIZE):
@@ -96,7 +104,7 @@ class Minesweeper:
         if 0 <= x < self.GRID_SIZE and 0 <= y < self.GRID_SIZE and not self.revealed[x][y]:
             self.is_revealed += 1
             if self.is_revealed == self.GRID_SIZE * self.GRID_SIZE - self.NUM_MINES:
-                self.win_screen()
+                self.game_win = True
                 return
             self.revealed[x][y] = True
             if self.grid[x][y] == 0:
@@ -104,9 +112,9 @@ class Minesweeper:
                     for j in range(-1, 2):
                         self.reveal_adjacent(x + i, y + j, reveal_count)
 
-    def is_running(self, event):
+    def is_running(self, event):      
         x, y = event.pos[0] // self.CELL_SIZE, event.pos[1] // self.CELL_SIZE
-
+  
         if event.button == 1:  # Left-click
             if (x, y) in self.mines:
                 # Game over, reveal all mines
@@ -114,8 +122,7 @@ class Minesweeper:
                     self.draw_mine(mine_x, mine_y)
                 pygame.display.flip()
                 pygame.time.delay(2000)
-                self.game_over = True
-                self.loss_screen()
+                self.game_lose = True
             else:
                 # Reveal the clicked cell and its adjacent tiles
                 self.reveal_adjacent(x, y, self.is_revealed)
@@ -154,13 +161,15 @@ class Minesweeper:
             pygame.mixer.music.set_volume(0)
             self.win_sound.set_volume(0.05)
             self.win_sound.play(0)
-
             self.screen.fill(self.WHITE)
+
             PLAY_TEXT = self.get_font(45).render("YOU WIN", True, self.BLACK)
             PLAY_RECT = PLAY_TEXT.get_rect(center=(400, 400))
             self.screen.blit(PLAY_TEXT, PLAY_RECT)
 
             pygame.display.update()
+        
+        return
 
     def loss_screen(self):
         running = True
@@ -176,11 +185,14 @@ class Minesweeper:
             self.loss_sound.set_volume(0.05)
             pygame.mixer.Sound.play(self.loss_sound, 1)
             self.screen.fill(self.WHITE)
+
             PLAY_TEXT = self.get_font(45).render("YOU LOSE", True, self.BLACK)
             PLAY_RECT = PLAY_TEXT.get_rect(center=(400, 400))
             self.screen.blit(PLAY_TEXT, PLAY_RECT)
 
             pygame.display.update()
+        
+        return
 
     def main(self):
         self.game_over = False
@@ -201,11 +213,15 @@ class Minesweeper:
 
                 if not self.game_over and event.type == pygame.MOUSEBUTTONDOWN:
                     if self.game_win:
-                        self.game_over = True
                         self.win_screen()
+                        self.game_win = False
+                        self.reset_board()
+
                     elif self.game_lose:
-                        self.game_over = True
                         self.loss_screen()
+                        self.game_lose = False
+                        self.reset_board()
+
                     else:
                         self.is_running(event)
 
