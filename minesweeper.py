@@ -2,6 +2,9 @@ import pygame
 import random
 
 class Minesweeper:
+    def start_game():
+    
+    
     def __init__(self):
         # Initialize Pygame
         pygame.init()
@@ -215,3 +218,15 @@ class Minesweeper:
 if __name__ == "__main__":
     minesweeper = Minesweeper()
     minesweeper.main()
+
+
+"""""
+add multiple difficulties by increasing the grid amount and num of bombs
+The game loops
+The first tile can't be a bomb
+The first click at the very least reveals all non bomb tiles in the 3by3 area
+improve aesthetic
+add sound effects
+add a timer
+add a flag / remaining bomb counter
+"""""
