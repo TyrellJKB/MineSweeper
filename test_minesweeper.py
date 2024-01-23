@@ -18,6 +18,7 @@ class TestMinesweeper(unittest.TestCase):
         self.assertEqual(minesweeper.WIDTH, 800)
         self.assertEqual(minesweeper.HEIGHT, 800)
         self.assertEqual(minesweeper.GRID_SIZE, 15)
+        
 
     def test_draw_grid(self):
         minesweeper = Minesweeper()

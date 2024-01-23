@@ -261,4 +261,5 @@ improve aesthetic
 leaderboards
 add a timer
 add a flag / remaining bomb counter
+add a volume mixer
 """""
