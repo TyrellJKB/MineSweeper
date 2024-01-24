@@ -26,6 +26,7 @@ This Minesweeper Game dubbed "Hazard Hunt" is a Python implementation of the cla
 
 6. **Difficulty Levels:**
     - Currently supports a single difficulty level with a fixed grid size and number of mines.
+    - This can be manually ammened by editing the GRID_SIZE and NUM_MINES variables
 
 ## Functionality
 
