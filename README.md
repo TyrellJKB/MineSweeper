@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Minesweeper Game dubbed "Hazard Hunt" is a Python implementation of the classic Minesweeper game using the Pygame library. The game features a grid of cells, some of which contain hidden mines. Players must reveal the cells without mines and flag the ones that do. The goal is to uncover all safe cells without triggering a mine.
+Welcome to the Minesweeper - Hazard Hunt repository! This Python implementation of the classic Minesweeper game provides a captivating gaming experience with a graphical user interface built using the Pygame library. Uncover hidden mines, strategically flag them, and navigate the grid to victory.
 
 ## Features
 
